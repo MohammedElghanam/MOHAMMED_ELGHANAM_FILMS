@@ -38,8 +38,7 @@ class UserController{
                 expiresIn: '1h',
             });
 
-            res.cookie('token', token, { httpOnly: true, maxAge: 3600000 });
-            return res.json({ user, token });
+            return res.json({ ...{user}, token: token });
 
         } catch (error) {
             return res.status(500).json({ message: error.message });
@@ -57,13 +56,10 @@ class UserController{
 
             if (user) {
 
-                const resetToken = jwt.sign({ email: user.email }, process.env.JWT_SECRET, {
+                const reset_Token = jwt.sign({ email: user.email }, process.env.JWT_SECRET, {
                     expiresIn: '1h',
                 });
 
-                // const resetToken = crypto.randomBytes(20).toString('hex');
-                res.cookie('resetToken', resetToken, { httpOnly: true, maxAge: 3600000, secure:false });
-                
                 var transport = nodemailer.createTransport({
                     host: "sandbox.smtp.mailtrap.io",
                     port: 2525,
@@ -79,12 +75,11 @@ class UserController{
                     to: user.email,
                     subject: 'Reset Password',
                     html: `<p>To reset your password, please click on the following link:</p>
-                            <a href="http://localhost:3000/users/reset_password/${resetToken}">click here</a>
-                            <h1>${resetToken}</h1>`
+                            <a href="http://localhost:3001/reset">Click here to reset your password</a>`
                 };
                 
                 await transport.sendMail(mailOptions);
-                res.status(200).json({ message: 'A password reset link has been sent to your email.', resetToken: resetToken });
+                res.status(200).json({ message: 'A password reset link has been sent to your email.', reset_Token: reset_Token });
 
             } else {
                 res.status(404).json({ error: 'This email is not registered.' });
@@ -95,43 +90,56 @@ class UserController{
         }
     }
 
+    // static async resetPassword(req, res) {
+    //     const { resetToken, newPassword } = req.body;
+        
+    //     try {
+            
+    //         const decoded = jwt.verify(resetToken, process.env.JWT_SECRET);
+    //         const email = decoded.email;            
+    //         const user_u = await User.findOne({ email });
+
+
+    //         // Hash the new password
+    //         const hashedPassword = await bcrypt.hash(newPassword, 10);
+    //         user_u.password = hashedPassword;
+    //         const user_updatePassword = await user_u.save();
+
+    //         if (!user_updatePassword) {
+    //            return res.status(500).json({ message: 'the password not update in database.' });
+    //         }else{ 
+    //             return res.status(200).json({ message: 'Password has been reset successfully.' });
+    //         }
+
+
+    //     } catch (err) {
+    //         res.status(500).json({ error: 'An error occurred while resetting the password.' });
+    //     }
+    // }
+
     static async resetPassword(req, res) {
         const { resetToken, newPassword } = req.body;
-        const reset_Token = req.cookies.resetToken;  
-        
+    
         try {
-
             
-            if (resetToken !== reset_Token) {
-                return res.status(400).json({ error: 'Invalid or expired token.' });
-            }
+            const { email } = jwt.verify(resetToken, process.env.JWT_SECRET);
             
+            const user = await User.findOne({ email });
+            if (!user) return res.status(404).json({ message: 'User not found.' });
+    
+            user.password = await bcrypt.hash(newPassword, 10);
+            const updatedUser = await user.save();
             
-            const decoded = jwt.verify(resetToken, process.env.JWT_SECRET);
-            const email = decoded.email;            
-            const user_u = await User.findOne({ email });
-
-
-            // Hash the new password
-            const hashedPassword = await bcrypt.hash(newPassword, 10);
-            user_u.password = hashedPassword;
-            const user_updatePassword = await user_u.save();
-
-            if (!user_updatePassword) {
-               return res.status(500).json({ message: 'the password not update in database.' });
-            }
-            
-            const clearing = await res.clearCookie('resetToken');
-            
-            if (clearing) {            
-                return res.status(200).json({ message: 'Password has been reset successfully.' });
-            }
-
-
+            if (!updatedUser) return res.status(500).json({ message: 'Password update failed.' });
+    
+            return res.status(200).json({ message: 'Password has been reset successfully.' });
+    
         } catch (err) {
-            res.status(500).json({ error: 'An error occurred while resetting the password.' });
+            return res.status(500).json({ error: 'An error occurred while resetting the password.', details: err.message });
         }
     }
+    
+
 
     static logout(req, res) {
 
