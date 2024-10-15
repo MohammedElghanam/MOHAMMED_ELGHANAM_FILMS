@@ -133,6 +133,15 @@ class UserController{
         }
     }
 
+    static logout(req, res) {
+
+        const clearing = res.clearCookie('token'); 
+        if (clearing) {            
+            res.json({ message: 'Logout successful' });
+        }
+
+    }
+    
 }
 
 module.exports = UserController;
