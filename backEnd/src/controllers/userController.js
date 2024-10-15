@@ -32,7 +32,7 @@ class UserController{
             if (!user) return res.status(400).json({ message: 'User not found' });
             
             const isMatch = await bcrypt.compare(password, user.password);
-            if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
+            if (!isMatch) return res.status(400).json({ message: 'Incorrect password' });
             
             const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, {
                 expiresIn: '1h',
@@ -94,7 +94,45 @@ class UserController{
             res.status(500).json({ error: 'An error occurred while sending the email.' });
         }
     }
-    
+
+    static async resetPassword(req, res) {
+        const { resetToken, newPassword } = req.body;
+        const reset_Token = req.cookies.resetToken;  
+        
+        try {
+
+            
+            if (resetToken !== reset_Token) {
+                return res.status(400).json({ error: 'Invalid or expired token.' });
+            }
+            
+            
+            const decoded = jwt.verify(resetToken, process.env.JWT_SECRET);
+            const email = decoded.email;            
+            const user_u = await User.findOne({ email });
+
+
+            // Hash the new password
+            const hashedPassword = await bcrypt.hash(newPassword, 10);
+            user_u.password = hashedPassword;
+            const user_updatePassword = await user_u.save();
+
+            if (!user_updatePassword) {
+               return res.status(500).json({ message: 'the password not update in database.' });
+            }
+            
+            const clearing = await res.clearCookie('resetToken');
+            
+            if (clearing) {            
+                return res.status(200).json({ message: 'Password has been reset successfully.' });
+            }
+
+
+        } catch (err) {
+            res.status(500).json({ error: 'An error occurred while resetting the password.' });
+        }
+    }
+
 }
 
 module.exports = UserController;
