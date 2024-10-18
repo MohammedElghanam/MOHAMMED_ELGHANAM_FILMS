@@ -1,8 +1,11 @@
 import React, { useState, useRef} from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Forgot from './forgot';
 
 export default function Login() {
+
+    const navigate = useNavigate();
 
     const [popup, setPopup] = useState(false);
     
@@ -21,7 +24,7 @@ export default function Login() {
                 .then((response) => {
                     localStorage.setItem('token', response.data.token);
                     console.log('user connected successfly');
-                    window.location.href = '/client';
+                    navigate('/protectedroute'); 
                 })
                 .catch((error) => {
                     console.error(error.response ? error.response.data : error.message); 
@@ -31,6 +34,8 @@ export default function Login() {
         }
         
     }
+
+    
 
     const showPopup = (e) => {
         e.preventDefault();

@@ -1,7 +1,7 @@
 import React from 'react';
 import Logout from '../components/UI/logout';
 
-export default function Client() {
+export default function DashboardUser() {
 
     return <>
         <div className=" mt-20">

@@ -2,6 +2,7 @@ const User = require('../models/userModel');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const nodemailer = require("nodemailer");
+const blacklistedTokens = [];
 class UserController{
 
     static async register(req, res) {
@@ -90,32 +91,6 @@ class UserController{
         }
     }
 
-    // static async resetPassword(req, res) {
-    //     const { resetToken, newPassword } = req.body;
-        
-    //     try {
-            
-    //         const decoded = jwt.verify(resetToken, process.env.JWT_SECRET);
-    //         const email = decoded.email;            
-    //         const user_u = await User.findOne({ email });
-
-
-    //         // Hash the new password
-    //         const hashedPassword = await bcrypt.hash(newPassword, 10);
-    //         user_u.password = hashedPassword;
-    //         const user_updatePassword = await user_u.save();
-
-    //         if (!user_updatePassword) {
-    //            return res.status(500).json({ message: 'the password not update in database.' });
-    //         }else{ 
-    //             return res.status(200).json({ message: 'Password has been reset successfully.' });
-    //         }
-
-
-    //     } catch (err) {
-    //         res.status(500).json({ error: 'An error occurred while resetting the password.' });
-    //     }
-    // }
 
     static async resetPassword(req, res) {
         const { resetToken, newPassword } = req.body;
@@ -138,16 +113,37 @@ class UserController{
             return res.status(500).json({ error: 'An error occurred while resetting the password.', details: err.message });
         }
     }
-    
+
+    static isTokenBlacklisted (token) {
+        return blacklistedTokens.includes(token);
+    };
 
 
     static logout(req, res) {
 
-        const clearing = res.clearCookie('token'); 
-        if (clearing) {            
-            res.json({ message: 'Logout successful' });
+        
+        const authHeader = req.header('Authorization');
+    
+        if (!authHeader) {
+            return res.status(401).json({ message: 'No token provided' });
         }
+    
+        const token = authHeader.split(' ')[1]; 
+        blacklistedTokens.push(token);
+    
+        res.json({ message: 'Logged out successfully' });
+    }
+    
 
+    static async getAllusers(req, res) {
+
+        try {
+          const users = await User.find();
+          return res.json(users);
+        } catch (error) {
+          return res.status(500).json({ message: error.message });
+        }
+        
     }
     
 }
