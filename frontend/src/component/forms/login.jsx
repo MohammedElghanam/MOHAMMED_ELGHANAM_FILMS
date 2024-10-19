@@ -28,9 +28,21 @@ export default function Login () {
             })
             .catch((error) => {
                 console.error('Login error:', error.response ? error.response.data : error.message);
+
+                if (error.response && error.response.status === 400 || error.response.status === 500) {
+                    console.error('Login error:', error.response.data.error); 
+                    alert(error.response.data.error); 
+                } else {
+                    console.error('Login error:', error.response ? error.response.data : error.message);
+                }
             }); 
         } catch (error) {
-            console.error('Login error:', error.response ? error.response.data : error.message);
+            if (error.response && error.response.status === 400 || error.response.status === 500) {
+                console.error('Login error:', error.response.data.error); 
+                alert(error.response.data.error); 
+            } else {
+                console.error('Login error:', error.response ? error.response.data : error.message);
+            }
         }
     };
 

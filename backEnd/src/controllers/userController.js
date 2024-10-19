@@ -33,10 +33,10 @@ class UserController{
 
             const user = await User.findOne({ email });
 
-            if (!user) return res.status(400).json({ message: 'User not found' });
+            if (!user) return res.status(400).json({ error: 'User not found' });
             
             const isMatch = await bcrypt.compare(password, user.password);
-            if (!isMatch) return res.status(400).json({ message: 'Incorrect password' });
+            if (!isMatch) return res.status(400).json({ error: 'Incorrect password' });
             
             const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, {
                 expiresIn: '1h',
@@ -45,7 +45,7 @@ class UserController{
             return res.json({ ...{user}, token: token });
 
         } catch (error) {
-            return res.status(500).json({ message: error.message });
+            return res.status(500).json({ error: error.message });
         }
     }
 
@@ -103,12 +103,12 @@ class UserController{
             const { email } = jwt.verify(resetToken, process.env.JWT_SECRET);
             
             const user = await User.findOne({ email });
-            if (!user) return res.status(404).json({ message: 'User not found.' });
+            if (!user) return res.status(404).json({ error: 'User not found.' });
     
             user.password = await bcrypt.hash(newPassword, 10);
             const updatedUser = await user.save();
             
-            if (!updatedUser) return res.status(500).json({ message: 'Password update failed.' });
+            if (!updatedUser) return res.status(500).json({ error: 'Password update failed.' });
     
             return res.status(200).json({ message: 'Password has been reset successfully.' });
     
