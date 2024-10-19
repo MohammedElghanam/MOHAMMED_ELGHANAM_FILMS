@@ -15,7 +15,7 @@ export default function Login () {
         password: '',
     });
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
         try {
             api.post('/login', formData)

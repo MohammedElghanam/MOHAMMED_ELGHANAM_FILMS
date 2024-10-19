@@ -8,6 +8,8 @@ class UserController{
     static async register(req, res) {
 
         const { name, email, password, image, role } = req.body;
+        // console.log(name, email, password, image);
+        
         let user = await User.findOne({ email });
         if (user) {
           return res.status(400).json({ msg: 'User already exists' });
@@ -17,6 +19,7 @@ class UserController{
             const user = await User.create({ name, email, password: hashedPassword, image, role });
             return res.status(201).json({ user });
         } catch (error) {
+            console.log(error.message);            
             return res.status(400).json({ message: error.message });
         }
           

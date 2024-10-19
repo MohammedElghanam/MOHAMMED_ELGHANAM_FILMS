@@ -1,9 +1,6 @@
-import React, { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 
 const ProtectedRoute = ({ children }) => {
-
-    const [active, setactive] = useState(false);
 
     const token = localStorage.getItem('token');
 
@@ -15,25 +12,13 @@ const ProtectedRoute = ({ children }) => {
         const payload = JSON.parse(atob(token.split('.')[1])); 
         return payload.role; 
     };
-
-    const isActive = () => {
-        setactive(true);
-    }
-
-    useEffect(() => {
-        setTimeout(() => {
-            setactive(false);
-        }, 3000);
-    }, [active]);
     
     const role = getUserRoleFromToken(token); 
 
     // return alert(role);
 
     if (role === 'admin') {
-        isActive();
-        const dashboardAdmin = children.find(child => child.type.name === 'DashboardAdmin');
-        return dashboardAdmin ? React.cloneElement(dashboardAdmin, { active }) : <Navigate to="/notfound" />;
+        return children.find(child => child.type.name === 'DashboardAdmin') || <Navigate to="/notfound" />;
     } else if (role === 'subscriber') {
         return children.find(child => child.type.name === 'DashboardUser') || <Navigate to="/notfound" />;
     }

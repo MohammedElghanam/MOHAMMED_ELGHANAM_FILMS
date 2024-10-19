@@ -1,10 +1,8 @@
 import Logout from "../components/UI/logout";
-import Success from "../component/success/success";
 
-export default function DashboardAdmin ({ active }) {
+export default function DashboardAdmin () {
     return <>
-        <div className=" mt-24">
-            { active && (<Success message='Successfully logged in as Admin!' />)}            
+        <div className=" mt-24">          
             <div className=" flex justify-between items-center mx-20">
                 <h1>hello to Dashboard</h1>
                 <Logout />

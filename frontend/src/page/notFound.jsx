@@ -1,5 +1,5 @@
 
-export default function ( ){
+export default function Notfound( ){
 
     const goToHome = () => {
       window.location.href = '/';
