@@ -19,8 +19,10 @@ app.use(cors({
 
 // Routes
 const userRoute = require('./routes/userRoute');
+const categoryRoute = require('./routes/categoryRoute');
 
 app.use('/api/user', userRoute);
+app.use('/api/categories', categoryRoute);
 
 const PORT = process.env.PORT || 5000;
 
