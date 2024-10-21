@@ -1,5 +1,5 @@
 const categoryModel = require("../models/categoryModel");
-
+const filmModel = require("../models/filmModel");
 
 class CategoryController {
 
@@ -65,7 +65,8 @@ class CategoryController {
         const { id } = req.params;
 
         try {
-            
+
+            const deletedFilms = await filmModel.deleteMany({ categoryId: id });
             const deletedCategory = await categoryModel.findByIdAndDelete(id);
 
             if (!deletedCategory) {
