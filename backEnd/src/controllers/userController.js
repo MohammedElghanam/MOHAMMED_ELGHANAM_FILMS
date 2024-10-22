@@ -94,7 +94,6 @@ class UserController{
         }
     }
 
-
     static async resetPassword(req, res) {
         const { resetToken, newPassword } = req.body;
     

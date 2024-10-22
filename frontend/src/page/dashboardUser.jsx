@@ -1,5 +1,5 @@
 import React from 'react';
-import Logout from '../components/UI/logout';
+import Logout from '../component/UI/logout';
 
 export default function DashboardUser() {
 

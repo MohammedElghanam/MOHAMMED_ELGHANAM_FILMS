@@ -37,51 +37,45 @@ class filmController {
         }
     }
 
-        static async update(req, res) {
-
-            const { id } = req.params;
-            const { title, description, releaseYear, categoryId } = req.body;
-            const video = req.files?.['video']?.[0]; 
-            const image = req.files?.['image']?.[0];
-
-            // console.log({ id: id, title: title, description:description,  releaseYear:releaseYear, categoryId:categoryId});            
-            // return res.status(200).json({ id: id, title: title, description:description,  releaseYear:releaseYear, categoryId:categoryId});
-            
+    static async update(req, res) {
+        const { id } = req.params;
+        const { title, description, releaseYear, categoryId } = req.body;
+        const video = req.files?.['video']?.[0]; 
+        const image = req.files?.['image']?.[0];
+        // console.log({ id: id, title: title, description:description,  releaseYear:releaseYear, categoryId:categoryId});            
+        // return res.status(200).json({ id: id, title: title, description:description,  releaseYear:releaseYear, categoryId:categoryId});
         
-            try {
-                
-                let imageUrl;
-                if (image) {
-                    imageUrl = await filmController.uploadToMinio(image.originalname, image.buffer, image.mimetype);
-                }
-        
-                
-                let videoUrl;
-                if (video) {
-                    videoUrl = await filmController.uploadToMinio(video.originalname, video.buffer, video.mimetype);
-                }
-        
-                const updatedFilm = await filmModel.findByIdAndUpdate(
-                    id,
-                    { 
-                        title, 
-                        description, 
-                        releaseYear, 
-                        ...(imageUrl && { imageUrl }), 
-                        ...(videoUrl && { videoUrl }),
-                        categoryId 
-                    },
-                    { new: true } 
-                );
-        
-                return res.status(200).json({ message: 'Film updated successfully', film: updatedFilm });
-            } catch (error) {
-                console.error('Error updating film:', error);
-                return res.status(500).json({ message: 'Error updating film', error });
+        try {                
+            let imageUrl;
+            if (image) {
+                imageUrl = await filmController.uploadToMinio(image.originalname, image.buffer, image.mimetype);
             }
-        }
+                    
+            let videoUrl;
+            if (video) {
+                videoUrl = await filmController.uploadToMinio(video.originalname, video.buffer, video.mimetype);
+            }
     
-
+            const updatedFilm = await filmModel.findByIdAndUpdate(
+                id,
+                { 
+                    title, 
+                    description, 
+                    releaseYear, 
+                    ...(imageUrl && { imageUrl }), 
+                    ...(videoUrl && { videoUrl }),
+                    categoryId 
+                },
+                { new: true } 
+            );
+    
+            return res.status(200).json({ message: 'Film updated successfully', film: updatedFilm });
+        } catch (error) {
+            console.error('Error updating film:', error);
+            return res.status(500).json({ message: 'Error updating film', error });
+        }
+    }
+    
     static async delete (req, res){
         const { id } = req.params;
 

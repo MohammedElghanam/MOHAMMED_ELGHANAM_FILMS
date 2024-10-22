@@ -3,26 +3,26 @@ import './App.css';
 import Register from './component/forms/register'
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Login from './component/forms/login';
-import Nav from './components/layouts/nav';
 import Reset from './component/forms/reset';
 import DashboardUser from './page/dashboardUser';
 import DashboardAdmin from './page/dashboardAdmin';
 import Notfound from './page/notFound';
 import ProtectedRoute from './routes/ProtectedRoute';
-import Test from './pages/test';
+import CreateFilm from './component/forms/createFilm';
+import CreateCategory from './component/forms/createCategory';
+import Test from './page/test';
 
 function App() {
   return (
     <BrowserRouter>
-      {/* <Nav /> */}
       <Routes>
 
-        <Route index path='/' element={<Login />} />
+      <Route index path='/' element={<Test />} />
+        {/* <Route index path='/' element={<Login />} /> */}
         <Route  path='/register' element={<Register />}  />
         <Route path="/reset" element={<Reset />} />
-        {/* <Route path="/client" element={<Client />} /> */}
-        {/* <Route path='/dashboard' element={<Dashboard />} /> */}
-        {/* <Route path='/notfound' element={<Notfound />} /> */}
+        {/* <Route path='/creatFilm' element={ <CreateFilm /> } /> */}
+        <Route path='/createCategory' element={ <CreateCategory />} />
 
         <Route 
             path="/protectedroute" 
@@ -38,7 +38,6 @@ function App() {
       </Routes>
     </BrowserRouter>
 
-    // <Test />
   );
 }
 

@@ -1,4 +1,4 @@
-import Logout from "../components/UI/logout";
+import Logout from "../component/UI/logout";
 
 export default function DashboardAdmin () {
     return <>

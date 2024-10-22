@@ -15,7 +15,7 @@ app.use(express.json());
 app.use(cookieParser());
 // app.use(cors());
 app.use(cors({
-    origin: 'http://localhost:3001'
+    origin: 'http://localhost:3000'
 }));
 
 
@@ -23,6 +23,8 @@ app.use(cors({
 const userRoute = require('./routes/userRoute');
 const categoryRoute = require('./routes/categoryRoute');
 const filmRoute = require('./routes/filmRoute');
+
+
 
 app.use('/api/user', userRoute);
 app.use('/api/categories', categoryRoute);
