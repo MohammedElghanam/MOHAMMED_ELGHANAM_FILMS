@@ -13,9 +13,9 @@ export default function CreateCategory ({ umountCategoryPopup }) {
         try {
             axios.post('http://localhost:5000/api/categories/create', { title })
             .then((response) => {
-                // alert(response.data.message); 
                 console.log(response.data);                
                 titleRef.current.value = '';               
+                alert(response.data.msg); 
             })
             .catch((error) => {
                 if (error.response && error.response.status === 404 || error.response.status === 500) {

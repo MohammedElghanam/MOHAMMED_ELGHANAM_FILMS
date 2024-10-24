@@ -2,9 +2,10 @@ const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
 const authMiddleware = require('../middleware/authMiddleware');
-const CategoryController = require('../controllers/categoryController');
+const multer = require('multer');
+const upload = multer();
 
-router.post('/register', userController.register);
+router.post('/register', upload.none(), userController.register);
 router.post('/login', userController.login);
 router.post('/forgotPassword', userController.forgotPassword);
 router.post('/resetPassword', userController.resetPassword);

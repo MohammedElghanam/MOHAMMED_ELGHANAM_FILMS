@@ -18,7 +18,7 @@ function App() {
       <Routes>
 
       <Route index path='/' element={<Test />} />
-        {/* <Route index path='/' element={<Login />} /> */}
+        {/* <Route index path='/' element={<Login />} />: */}
         <Route  path='/register' element={<Register />}  />
         <Route path="/reset" element={<Reset />} />
         {/* <Route path='/creatFilm' element={ <CreateFilm /> } /> */}

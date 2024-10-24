@@ -1,10 +1,10 @@
 
-export default function Users () {
+export default function Users ({ mountUserPopup }) {
     return <>
     <div className=" col-span-8 h-fit bg-white rounded-xl py-4 shadow-2xl">
         <div className=" flex justify-between items-center px-4">
             <h1 className=" text-2xl text-gray-900 font-medium"> Users </h1>
-            <button className=" px-6 py-1.5 rounded-lg font-medium text-sm text-white bg-purple-600 hover:bg-purple-500"> Create User </button>
+            <button onClick={ mountUserPopup } className=" px-6 py-1.5 rounded-lg font-medium text-sm text-white bg-purple-600 hover:bg-purple-500"> Create User </button>
         </div>
         <div className=" w-full mt-2">
             <div className="relative overflow-x-auto ">

@@ -3,21 +3,25 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const nodemailer = require("nodemailer");
 const blacklistedTokens = [];
+const path = require('path');
+const fs = require('fs');
+const { minioClient } = require("../config/minio");
 class UserController{
 
     static async register(req, res) {
 
-        const { name, email, password, image, role } = req.body;
-        // console.log(name, email, password, image);
+        const { name, email, password, role } = req.body;
+        const image = await UserController.uploadDefaultImage(); 
+        console.log(name, email, password, image, role);
         
         let user = await User.findOne({ email });
         if (user) {
-          return res.status(400).json({ msg: 'User already exists' });
+            return res.status(400).json({ msg: 'User already exists' });
         }
         try {
             const hashedPassword = await bcrypt.hash(password, 10);
             const user = await User.create({ name, email, password: hashedPassword, image, role });
-            return res.status(201).json({ user });
+            return res.status(201).json({ message: "send success", user: user });
         } catch (error) {
             console.log(error.message);            
             return res.status(400).json({ message: error.message });
@@ -120,7 +124,6 @@ class UserController{
         return blacklistedTokens.includes(token);
     };
 
-
     static logout(req, res) {
 
         
@@ -135,7 +138,6 @@ class UserController{
     
         res.json({ message: 'Logged out successfully' });
     }
-    
 
     static async getAllusers(req, res) {
 
@@ -147,7 +149,28 @@ class UserController{
         }
         
     }
-    
+
+    static async uploadDefaultImage () {
+        const filePath = 'c:/Users/YouCode/Downloads/default.jpg';
+        const fileBuffer = fs.readFileSync(filePath);
+        const fileName = 'default.jpg';
+
+        try {
+            await minioClient.putObject('imageuser', fileName, fileBuffer, fileBuffer.length, {
+                'Content-Type': 'image/jpeg',
+            });
+            console.log('Image uploaded successfully.');
+            return `http://localhost:9000/imageuser/${fileName}`;
+        } catch (error) {
+            console.error('Error uploading to MinIO:', error);
+            throw error;
+        }
+    }    
 }
 
 module.exports = UserController;
+
+
+
+
+
