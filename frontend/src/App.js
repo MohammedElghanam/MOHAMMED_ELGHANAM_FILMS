@@ -11,13 +11,15 @@ import ProtectedRoute from './routes/ProtectedRoute';
 import CreateFilm from './component/forms/createFilm';
 import CreateCategory from './component/forms/createCategory';
 import Test from './page/test';
+import Detail from './page/details';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
 
-      <Route index path='/' element={<Test />} />
+      {/* <Route index path='/' element={<Test />} /> */}
+      <Route index path='/' element={<Detail />} />
         {/* <Route index path='/' element={<Login />} />: */}
         <Route  path='/register' element={<Register />}  />
         <Route path="/reset" element={<Reset />} />
